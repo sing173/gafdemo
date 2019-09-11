@@ -31,18 +31,18 @@ public class testRuleFunction {
     }
 
     public class TestResult {
-        private String personalInfo;
+        private String result_personalInfo;
 
-        public TestResult(String personalInfo){
-            this.personalInfo = personalInfo;
+        public TestResult(String result_personalInfo){
+            this.result_personalInfo = result_personalInfo;
         }
 
         public String getPersonalInfo() {
-            return personalInfo;
+            return result_personalInfo;
         }
 
-        public void setPersonalInfo(String personalInfo) {
-            this.personalInfo = personalInfo;
+        public void setPersonalInfo(String result_personalInfo) {
+            this.result_personalInfo = result_personalInfo;
         }
     }
 
@@ -52,7 +52,7 @@ public class testRuleFunction {
 
         Map<String, Object> env = new HashMap<String, Object>();
         Map<String, Object> env_event = new HashMap<String, Object>();
-        env_event.put("cType", "新客户");
+        env_event.put("cType", "准新客户");
         env_event.put("incomeOfYear", 1000000);
         env_event.put("age", 19);
         env_event.put("male", "女");
@@ -65,14 +65,15 @@ public class testRuleFunction {
         env_event.put("marriage", "婚姻");
         env.put("event", env_event);
 
-        env.put("approval", "最终审批");
-        env.put("access", "准入");
-        env.put("scoreCard1", 0);
+        env.put("result_approval", "最终审批");
+        env.put("result_access", "准入");
+        env.put("result_scoreCard1", 0);
+        env.put("result_personalInfo", "个人信息");
 //        Map<String, Object> env_result = new HashMap<String, Object>();
-//        env_result.put("personalInfo", "个人信息");
+//        env_result.put("result_personalInfo", "个人信息");
 //        env.put("result", env_result);
-        TestResult result = new TestResult("abc");
-        env.put("result", result);
+//        TestResult result = new TestResult("abc");
+//        env.put("result", result);
 
         //构建规则流作为参数传入
         Map<String, Object> env_rule = new HashMap<String, Object>();
@@ -86,7 +87,7 @@ public class testRuleFunction {
         //构建决策流
         buildTestRuleFlow(env_rule);
 
-//        if((Boolean) AviatorEvaluator.execute("result.personalInfo == 'abc'", env)){
+//        if((Boolean) AviatorEvaluator.execute("result_personalInfo == 'abc'", env)){
 //
 //            AviatorEvaluator.execute("abc = 'lmx'", env);
 //            if((Boolean) AviatorEvaluator.execute("abc == 'lmx'", env)){
@@ -100,35 +101,35 @@ public class testRuleFunction {
 //        for (Map.Entry<String, Object> entry : env.entrySet()){
 //            System.out.println("key="+entry.getKey()+";value="+entry.getValue());
 //        }
-        System.out.println("key=approval"+";value="+env.get("approval"));
-        System.out.println("key=access"+";value="+env.get("access"));
-        System.out.println("key=personalInfo"+";value="+env.get("personalInfo"));
-        System.out.println("key=scoreCard1"+";value="+env.get("scoreCard1"));
+        System.out.println("key=result_approval"+";value="+env.get("result_approval"));
+        System.out.println("key=result_access"+";value="+env.get("result_access"));
+        System.out.println("key=result_personalInfo"+";value="+env.get("result_personalInfo"));
+        System.out.println("key=result_scoreCard1"+";value="+env.get("result_scoreCard1"));
     }
 
     private Map<String, Object> buildTestRuleTable(Map<String, Object> env_rule){
         try {
             //规则配置
             Rule rule1 = new Rule("event.male == '男' && event.age >= 18 && event.car == '有车' && event.house == '有房'",
-                    "result.personalInfo = '成年男性有车有房'", null);
+                    "result_personalInfo = '成年男性有车有房'", null);
             Rule rule2 = new Rule("event.male == '男' && event.age >= 18 && event.car != '有车' && event.house == '有房'",
-                    "result.personalInfo = '成年男性有房'", null);
+                    "result_personalInfo = '成年男性有房'", null);
             Rule rule3 = new Rule("event.male == '男' && event.age >= 18 && event.car == '有车' && event.house != '有房'",
-                    "result.personalInfo = '成年男性有车'", null);
+                    "result_personalInfo = '成年男性有车'", null);
             Rule rule4 = new Rule("event.male == '男' && event.age >= 18 && event.car != '有车' && event.house != '有房'",
-                    "result.personalInfo = '成年男性'", null);
+                    "result_personalInfo = '成年男性'", null);
             Rule rule5 = new Rule("event.male == '男' && event.age < 18",
-                    "result.personalInfo = '未成年男性'", null);
+                    "result_personalInfo = '未成年男性'", null);
             Rule rule6 = new Rule("event.male == '女' && event.age >= 18 && event.car == '有车' && event.house == '有房'",
-                    "result.personalInfo = '成年女性有车有房'", null);
+                    "result_personalInfo = '成年女性有车有房'", null);
             Rule rule7 = new Rule("event.male == '女' && event.age >= 18 && event.car != '有车' && event.house == '有房'",
-                    "result.personalInfo = '成年女性有房'", null);
+                    "result_personalInfo = '成年女性有房'", null);
             Rule rule8 = new Rule("event.male == '女' && event.age >= 18 && event.car == '有车' && event.house != '有房'",
-                    "result.personalInfo = '成年女性有车'", null);
+                    "result_personalInfo = '成年女性有车'", null);
             Rule rule9 = new Rule("event.male == '女' && event.age >= 18 && event.car != '有车' && event.house != '有房'",
-                    "result.personalInfo = '成年女性'", null);
+                    "result_personalInfo = '成年女性'", null);
             Rule rule10 = new Rule("event.male == '女' && event.age < 18",
-                    "result.personalInfo = '未成年女性'", null);
+                    "result_personalInfo = '未成年女性'", null);
 
             RuleTable ruleTable = new RuleTable(0);
             ruleTable.addRuleRow(rule1);
@@ -153,9 +154,9 @@ public class testRuleFunction {
 
     private Map<String, Object> buildTestRuleSet(Map<String, Object> env_rule){
         try {
-            Rule rule1 = new Rule("event.incomeOfYear <= 20000", "access = '年收入低'", null);
-            Rule rule2 = new Rule("event.channel == '网申'", "access = '非法渠道'", null);
-            Rule rule3 = new Rule("event.age < 20 || event.age > 50", "access = '年龄不符'", null);
+            Rule rule1 = new Rule("event.incomeOfYear <= 20000", "result_access = '年收入低'", null);
+            Rule rule2 = new Rule("event.channel == '网申'", "result_access = '非法渠道'", null);
+            Rule rule3 = new Rule("event.age < 20 || event.age > 50", "result_access = '年龄不符'", null);
             RuleSet ruleSet = new RuleSet(0);
             ruleSet.addRule(rule1);
             ruleSet.addRule(rule2);
@@ -170,11 +171,11 @@ public class testRuleFunction {
 
     private Map<String, Object> buildTestRuleCard(Map<String, Object> env_rule){
         try {
-            Rule rule1 = new Rule("event.incomeOfYear < 100000 ", "scoreCard1 = 1", null);
-            Rule rule2 = new Rule("event.overdue < 5 ", "scoreCard1 = scoreCard1 + 2", null);
-            Rule rule3 = new Rule("event.education == '高中' ", "scoreCard1 = scoreCard1 + 1", null);
-            Rule rule4 = new Rule("event.education == '大专' ", "scoreCard1 = scoreCard1 + 2", null);
-            Rule rule5 = new Rule("event.education == '本科' ", "scoreCard1 = scoreCard1 + 3", null);
+            Rule rule1 = new Rule("event.incomeOfYear < 100000 ", "result_scoreCard1 = 1", null);
+            Rule rule2 = new Rule("event.overdue < 5 ", "result_scoreCard1 = result_scoreCard1 + 2", null);
+            Rule rule3 = new Rule("event.education == '高中' ", "result_scoreCard1 = result_scoreCard1 + 1", null);
+            Rule rule4 = new Rule("event.education == '大专' ", "result_scoreCard1 = result_scoreCard1 + 2", null);
+            Rule rule5 = new Rule("event.education == '本科' ", "result_scoreCard1 = result_scoreCard1 + 3", null);
 
             RuleCard ruleCard = new RuleCard("", 0);
             ruleCard.addRule(rule1);
@@ -196,17 +197,17 @@ public class testRuleFunction {
         RuleFlowNode node1_r = new RuleFlowNode("event.cType == '准新客户'");
         node1.setLeftChild(node1_l);
         node1.setRightChild(node1_r);
-        RuleFlowNode node2 = new RuleFlowNode("access == '准入'",
-                "approval = '新客通过'", "approval = '新客不通过'");
+        RuleFlowNode node2 = new RuleFlowNode("result_access == '准入'",
+                "result_approval = '新客通过'", "result_approval = '新客不通过'");
         node1_l.setLeftChild(node2);
         RuleFlowNode node3 = new RuleFlowNode("rule(rule.ruleTable1)");
-        node3.setLeftChild(new RuleFlowNode("approval = '准新通过'"));
+        node3.setLeftChild(new RuleFlowNode("result_approval = '准新通过'"));
         node1_r.setLeftChild(node3);
         RuleFlowNode node4 = new RuleFlowNode("event.cType == '存量客户'");
         node1_r.setRightChild(node4);
         RuleFlowNode node4_l = new RuleFlowNode("rule(rule.ruleCard1)");
         node4.setLeftChild(node4_l);
-        node4_l.setLeftChild(new RuleFlowNode("approval = '存量客通过'"));
+        node4_l.setLeftChild(new RuleFlowNode("result_approval = '存量客通过'"));
 
         RuleFlow ruleFlow = new RuleFlow(node1);
         env_rule.put("ruleFlow1", ruleFlow);
