@@ -9,14 +9,6 @@ class RuleCard extends BaseRule {
     def propertyScoreList = []
     def type
 
-    class RuleCardPropertyScore {
-        def propertyCode
-        def propertyWeight
-        def propertyScore
-        def propertyItemList = []
-
-    }
-
     @Override
     def execute(Map<String, Object> env) {
         propertyScoreList.each {propertyScore ->
@@ -26,5 +18,16 @@ class RuleCard extends BaseRule {
         }
 
         this.hit
+    }
+
+    class RuleCardPropertyScore {
+        def propertyCode
+        def propertyWeight
+        def propertyScore = 0
+        def propertyItemList = []
+
+        String toString(){
+            "propertyCode:$propertyCode,propertyWeight:$propertyWeight,propertyScore:$propertyScore"
+        }
     }
 }

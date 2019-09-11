@@ -7,44 +7,37 @@ import groovy.DslEvaluator
  */
 
 def dslEvaluator = new DslEvaluator()
-def rule2 = dslEvaluator.executeDslForRule('''
+def rule1 = dslEvaluator.executeDslForRule('''
                 rule {
-                    info {
-                        name = "规则2"
-                        code = "rule2"
-                        id = "abc2"
-                    }
+                    name = "规则2"
+                    code = "rule2"
+                    id = "abc2"
                     filter("age > 18")
                     assign("result = 'pass'")
                     otherAssign("result = 'reject'")
                 }
             ''')
-println(rule2.toString())
+println(rule1.toString())
 
 def ruleSet = dslEvaluator.executeDslForRuleSet('''
                 ruleSet {
-                    info {
-                        name = "规则集1"
-                        code = "ruleSet1"
-                        id = "abc11"
-                        type = 1
-                    }
+                    name = "规则集1"
+                    code = "ruleSet1"
+                    id = "abc11"
+                    type = 1
+                    
                     rule {
-                        info {
-                            name = "规则1"
-                            code = "rule1"
-                            id = "abc1"
-                        }
+                        name = "规则1"
+                        code = "rule1"
+                        id = "abc1"
                         filter("age > 18")
                         assign("result = 'pass'")
                         otherAssign("result = 'reject'")
                     }
                     rule {
-                        info {
-                            name = "规则2"
-                            code = "rule2"
-                            id = "abc2"
-                        }
+                        name = "规则2"
+                        code = "rule2"
+                        id = "abc2"
                         filter("age < 18")
                         assign("result = 'pass'")
                         otherAssign("result = 'reject'")
@@ -58,19 +51,17 @@ ruleSet.ruleMap.each {rule ->
 
 def ruleTable = dslEvaluator.executeDslForRuleTable('''
                 ruleTable {
-                    info {
-                        name = "决策表1"
-                        code = "ruleTable1"
-                        id = "ffff11"
-                        type = 1
-                    }
+                    name = "决策表1"
+                    code = "ruleTable1"
+                    id = "ffff11"
+                    type = 1
                     row {
-                        rowItem("age > 18",0)
-                        rowItem("age < 18",1)
+                        rowItem(0,"age > 18")
+                        rowItem(1,"age < 18")
                     }
                     column {
-                        columnItem("male = 1",0)
-                        columnItem("male = 0",1)
+                        columnItem(0,"male = 1")
+                        columnItem(1,"male = 0")
                     }
                     assign {
                         assignItem("result1 = 'r1c1'","result2 = 'r1c2'")
@@ -80,30 +71,32 @@ def ruleTable = dslEvaluator.executeDslForRuleTable('''
             ''')
 
 println(ruleTable.toString())
-ruleTable.ruleList.each {rule ->
-    println(rule.toString())
+ruleTable.rowItemMap.each {row ->
+    println(row.toString())
+}
+
+ruleTable.columnItemMap.each {column ->
+    println(column.toString())
 }
 
 def ruleCard = dslEvaluator.executeDslForRuleCard('''
                 ruleCard {
-                    info {
-                        name = "评分卡1"
-                        code = "ruleCard1"
-                        id = "ccc11"
-                        type = 1
-                    }
+                    name = "评分卡1"
+                    code = "ruleCard1"
+                    id = "ccc11"
+                    type = 1
                     propertyScore {
                         propertyCode = "event_age"
                         propertyWeight = 3
-                        propertyItem("age < 18", 1)
-                        propertyItem("age > 18 && age < 25", 2)
-                        propertyItem("age > 25 && age < 50", 3)
+                        propertyItem(1,"age < 18")
+                        propertyItem(2,"age > 18 && age < 25")
+                        propertyItem(3,"age > 25 && age < 50")
                     }
                     propertyScore {
                         propertyCode = "event_male"
                         propertyWeight = 5
-                        propertyItem("male = 0", 1)
-                        propertyItem("male = 1", 2)
+                        propertyItem(1,"male = 0")
+                        propertyItem(2,"male = 1")
                     }
                 }
             ''')
@@ -114,11 +107,9 @@ ruleCard.propertyScoreList.each {propertyScore ->
 
 def ruleFlow = dslEvaluator.executeDslForRuleFlow('''
                 ruleFlow {
-                    info {
-                        name = "决策流1"
-                        code = "ruleFlow1"
-                        id = "dddd11"
-                    }
+                    name = "决策流1"
+                    code = "ruleFlow1"
+                    id = "dddd11"
                     rootNode {
                         expression("rootNode == '1';age > 18")
                         leftChild {
@@ -141,4 +132,5 @@ def ruleFlow = dslEvaluator.executeDslForRuleFlow('''
             ''')
 
 println(ruleFlow.toString())
+println(ruleFlow.rootNode.toString())
 

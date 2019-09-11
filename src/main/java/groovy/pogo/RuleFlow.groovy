@@ -43,6 +43,7 @@ class RuleFlow extends BaseRule{
         }
     }
 
+
     class RuleFlowNode {
         def expressionStr
         def expression
@@ -59,6 +60,15 @@ class RuleFlow extends BaseRule{
 
         def hasRightTree(){
             return rightChild != null
+        }
+
+        String toString(){
+            def str = "expression:$expressionStr"
+            if(hasLeftTree())
+                str += "\nleftChild:" + leftChild.toString()
+            if(hasRightTree())
+                str += "\nrightChild:" + rightChild.toString()
+            return str
         }
     }
 }

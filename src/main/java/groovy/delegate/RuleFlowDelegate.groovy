@@ -6,26 +6,20 @@ import groovy.pogo.RuleFlow
 /**
  * Created by luomingxing on 2019/9/11.
  */
-class RuleFlowDelegate {
-    def ruleFlow
+class RuleFlowDelegate extends BaseDelegate{
 
-    RuleFlowDelegate(ruleFlow){
-        this.ruleFlow = ruleFlow
+    RuleFlowDelegate(RuleFlow ruleFlow){
+        this.rule = ruleFlow
     }
 
     def methodMissing(String name, Object args) {
-        if('info' == name){
-            def infoClosure = args[0]
-            infoClosure.delegate = new BaseInfoDelegate(ruleFlow)
-            infoClosure.resolveStrategy = Closure.DELEGATE_FIRST
-            infoClosure()
-        } else if('rootNode' == name){
+        if('rootNode' == name){
             def flowNodeClosure = args[0]
             def rootNode = new RuleFlow.RuleFlowNode()
             flowNodeClosure.delegate = new RuleFlowNodeDelegate(rootNode)
             flowNodeClosure.resolveStrategy = Closure.DELEGATE_FIRST
             flowNodeClosure()
-            this.ruleFlow.rootNode = rootNode
+            this.rule.rootNode = rootNode
 
         }
 

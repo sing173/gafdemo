@@ -1,31 +1,25 @@
 package groovy.delegate
 
 import com.googlecode.aviator.AviatorEvaluator
+import groovy.pogo.Rule
 
 /**
  * Created by luomingxing on 2019/9/9.
  */
-class RuleDelegate {
-    def rule
+class RuleDelegate extends BaseDelegate{
 
-    RuleDelegate(rule){
+    RuleDelegate(Rule rule){
         this.rule = rule
     }
 
     def methodMissing(String name, Object args) {
-        if('info' == name){
-            def infoClosure = args[0]
-            infoClosure.delegate = new BaseInfoDelegate(rule)
-            infoClosure.resolveStrategy = Closure.DELEGATE_FIRST
-            infoClosure()
-        }
-        else if('filter' == name){
+        if('filter' == name){
             rule.filter = args[0] as String
             rule.filterExpress = AviatorEvaluator.compile(args[0] as String)
         } else if('assign' == name){
             rule.assign = args[0] as String
             rule.assignExpress = AviatorEvaluator.compile(args[0] as String)
-        } else {
+        } else if('otherAssign' == name){
             rule.otherAssign = args[0] as String
             rule.otherAssignExpress = AviatorEvaluator.compile(args[0] as String)
         }
