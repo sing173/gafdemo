@@ -1,7 +1,7 @@
-package groovy.delegate
+package gafdemo.groovy.delegate
 
 import com.googlecode.aviator.AviatorEvaluator
-import groovy.pogo.RuleFlow
+import gafdemo.groovy.pogo.RuleFlow
 
 /**
  * Created by luomingxing on 2019/9/11.

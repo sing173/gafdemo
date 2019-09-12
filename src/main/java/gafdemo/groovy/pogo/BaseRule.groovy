@@ -1,4 +1,4 @@
-package groovy.pogo
+package gafdemo.groovy.pogo
 
 /**
  * Created by luomingxing on 2019/9/9.
@@ -9,9 +9,13 @@ abstract class BaseRule {
     protected String code
     protected Boolean hit
 
+    def hasHit(){
+        return null != hit && hit
+    }
+
     String toString() {
         "ID: $id, Name: $name, Code: $code"
     }
 
-    abstract def execute(Map<String, Object> env)
+    abstract Boolean execute(Map<String, Object> env)
 }

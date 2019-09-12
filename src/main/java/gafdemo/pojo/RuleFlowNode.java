@@ -1,4 +1,4 @@
-package aviator.vo;
+package gafdemo.pojo;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;

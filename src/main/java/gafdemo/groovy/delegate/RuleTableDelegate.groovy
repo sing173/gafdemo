@@ -1,8 +1,8 @@
-package groovy.delegate
+package gafdemo.groovy.delegate
 
 import com.googlecode.aviator.AviatorEvaluator
 import com.googlecode.aviator.Expression
-import groovy.pogo.RuleTable
+import gafdemo.groovy.pogo.RuleTable
 
 /**
  * Created by luomingxing on 2019/9/9.

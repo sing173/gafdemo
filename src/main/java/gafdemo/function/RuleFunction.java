@@ -1,12 +1,10 @@
-package aviator.function;
+package gafdemo.function;
 
-import aviator.vo.BaseRule;
-import aviator.vo.Rule;
+import gafdemo.pojo.BaseRule;
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import com.googlecode.aviator.runtime.type.AviatorObject;
-import com.googlecode.aviator.runtime.type.AviatorString;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package aviator;
+package gafdemo;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by luomingxing on 2019/8/22.
  */
-public class testIfthen {
+public class TestAviator {
 
     @Test
     public void test(){

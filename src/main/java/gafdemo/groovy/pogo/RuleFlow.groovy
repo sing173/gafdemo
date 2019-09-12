@@ -1,4 +1,4 @@
-package groovy.pogo
+package gafdemo.groovy.pogo
 
 /**
  * Created by luomingxing on 2019/9/10.
@@ -19,7 +19,7 @@ class RuleFlow extends BaseRule{
     }
 
     @Override
-    def execute(Map<String, Object> env) {
+    Boolean execute(Map<String, Object> env) {
         this.env = env
         visitTree(rootNode)
         return true

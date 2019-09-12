@@ -1,15 +1,15 @@
-package groovy
+package gafdemo.groovy
 
-import groovy.delegate.RuleCardDelegate
-import groovy.delegate.RuleDelegate
-import groovy.delegate.RuleFlowDelegate
-import groovy.delegate.RuleSetDelegate
-import groovy.delegate.RuleTableDelegate
-import groovy.pogo.Rule
-import groovy.pogo.RuleCard
-import groovy.pogo.RuleFlow
-import groovy.pogo.RuleSet
-import groovy.pogo.RuleTable
+import gafdemo.groovy.delegate.RuleCardDelegate
+import gafdemo.groovy.delegate.RuleDelegate
+import gafdemo.groovy.delegate.RuleFlowDelegate
+import gafdemo.groovy.delegate.RuleSetDelegate
+import gafdemo.groovy.delegate.RuleTableDelegate
+import gafdemo.groovy.pogo.Rule
+import gafdemo.groovy.pogo.RuleCard
+import gafdemo.groovy.pogo.RuleFlow
+import gafdemo.groovy.pogo.RuleSet
+import gafdemo.groovy.pogo.RuleTable
 
 /**
  * Created by luomingxing on 2019/9/10.

@@ -1,6 +1,6 @@
-package groovy.delegate
+package gafdemo.groovy.delegate
 
-import groovy.pogo.BaseRule
+import gafdemo.groovy.pogo.BaseRule
 
 /**
  * Created by luomingxing on 2019/9/9.

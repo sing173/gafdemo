@@ -1,4 +1,4 @@
-package groovy.pogo
+package gafdemo.groovy.pogo
 
 
 /**
@@ -13,7 +13,8 @@ class Rule extends BaseRule {
     def otherAssignExpress
 
     @Override
-    def execute(Map<String, Object> env) {
+    Boolean execute(Map<String, Object> env) {
+        println("execute rule:$this")
         //执行if判断
         hit = (Boolean) filterExpress.execute(env)
         if(hit){

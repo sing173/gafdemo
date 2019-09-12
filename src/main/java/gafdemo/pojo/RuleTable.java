@@ -1,4 +1,4 @@
-package aviator.vo;
+package gafdemo.pojo;
 
 import java.util.ArrayList;
 import java.util.List;

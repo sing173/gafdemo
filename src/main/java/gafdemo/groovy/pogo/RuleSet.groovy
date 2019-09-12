@@ -1,4 +1,4 @@
-package groovy.pogo
+package gafdemo.groovy.pogo
 
 /**
  * Created by luomingxing on 2019/9/10.
@@ -11,20 +11,21 @@ class RuleSet extends BaseRule{
     def type
 
     @Override
-    def execute(Map<String, Object> env) {
-        if(type == 0){
+    Boolean execute(Map<String, Object> env) {
+        println("execute ruleSet:$this")
+        if(0 == type){
             //优先级模式命中一个规则即跳出，不再执行其他规则
             ruleMap.each {rule ->
-                if(rule.execute(env)){
-                    this.setHit(true)
+                if(rule.value.execute(env)){
+                    this.hit = true
                     return true
                 }
             }
         } else {
             //贪婪模式全模式执行
             ruleMap.each { rule ->
-                if(rule.execute(env) && !this.hit){
-                    this.setHit(true)
+                if(rule.value.execute(env) && !this.hasHit()){
+                    this.hit = true
                 }
             }
         }

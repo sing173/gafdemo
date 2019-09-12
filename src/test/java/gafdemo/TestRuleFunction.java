@@ -1,8 +1,8 @@
-package aviator;
+package gafdemo;
 
-import aviator.function.RuleFunction;
-import aviator.vo.*;
+import gafdemo.function.RuleFunction;
 import com.googlecode.aviator.AviatorEvaluator;
+import gafdemo.pojo.*;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by luomingxing on 2019/8/22.
  */
-public class testRuleFunction {
+public class TestRuleFunction {
 
     @Deprecated
     @Test

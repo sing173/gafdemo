@@ -1,8 +1,8 @@
-package groovy.delegate
+package gafdemo.groovy.delegate
 
 import com.googlecode.aviator.AviatorEvaluator
 import com.googlecode.aviator.Expression
-import groovy.pogo.RuleCard
+import gafdemo.groovy.pogo.RuleCard
 
 /**
  * Created by luomingxing on 2019/9/9.
@@ -52,11 +52,9 @@ class RuleCardPropertyScoreDelegate {
 
     def methodMissing(String name, Object args) {
         if('propertyItem' == name){
-            def propertyItem = [:]
             //参数0为评分项的得分,参数1为评分项的条件，比如(1:"age>18")
             Expression expression = AviatorEvaluator.compile(args[1])
-            propertyItem[args[0]] = expression
-            this.propertyScore.propertyItemList << propertyItem
+            this.propertyScore.propertyItemMap[args[0]] = expression
         }
 
     }
