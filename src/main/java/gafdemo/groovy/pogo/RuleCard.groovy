@@ -15,7 +15,7 @@ class RuleCard extends BaseRule {
 
     @Override
     Boolean execute(Map<String, Object> env) {
-        println("execute ruleCard: $this, type: $type")
+        println("--------execute ruleCard: $this, type: $type")
         propertyScoreList.eachWithIndex {propertyScorePogo, index ->
             println("execute ruleCard propertyScore $propertyScorePogo.propertyCode")
             for(Map.Entry<Object, Object> propertyItem : propertyScorePogo.propertyItemMap) {

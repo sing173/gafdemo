@@ -7,19 +7,9 @@ class RuleFlow extends BaseRule{
     def rootNode
     def env
 
-    RuleFlow(){
-        RuleFlowNode.metaClass.execute = { args_env ->
-            if(this.isLeaf()){
-                this.expression.execute(args_env)
-                return false
-            } else {
-                return (Boolean) this.expression.execute(args_env)
-            }
-        }
-    }
-
     @Override
     Boolean execute(Map<String, Object> env) {
+        println("--------execute ruleflow: $this")
         this.env = env
         visitTree(rootNode)
         return true
@@ -60,6 +50,16 @@ class RuleFlow extends BaseRule{
 
         def hasRightTree(){
             return rightChild != null
+        }
+
+        def execute (Map<String, Object> env) {
+            println("execute ruleflowNode: $expressionStr")
+            if(this.isLeaf()){
+                this.expression.execute(env)
+                return false
+            } else {
+                return (Boolean) this.expression.execute(env)
+            }
         }
 
         String toString(){

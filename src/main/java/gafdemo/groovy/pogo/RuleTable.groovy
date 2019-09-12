@@ -20,7 +20,7 @@ class RuleTable extends BaseRule{
 
     @Override
     Boolean execute(Map<String, Object> env) {
-        println("execute ruleTable $this")
+        println("--------execute ruleTable $this")
         //根据表类型执行决策
         if(0 == type){
             //简单决策表只需执行行规则
