@@ -1,6 +1,7 @@
 package gafdemo.groovy
 
-import gafdemo.groovy.delegate.event.PatternDelegate
+import gafdemo.groovy.delegate.event.CepEventDelegate
+import gafdemo.groovy.delegate.event.CepPatternDelegate
 import gafdemo.groovy.delegate.rule.RuleCardDelegate
 import gafdemo.groovy.delegate.rule.RuleDelegate
 import gafdemo.groovy.delegate.rule.RuleFlowDelegate
@@ -11,6 +12,7 @@ import gafdemo.groovy.pogo.rule.RuleCard
 import gafdemo.groovy.pogo.rule.RuleFlow
 import gafdemo.groovy.pogo.rule.RuleSet
 import gafdemo.groovy.pogo.rule.RuleTable
+import gafdemo.pojo.event.CepEvent
 import gafdemo.pojo.event.CepPattern
 
 /**
@@ -89,10 +91,11 @@ class DslEvaluator {
         }
     }
 
+    @Deprecated
     def executeDslForPattern(dslScript) {
         executeScript(dslScript, 'pattern'){ closure ->
             CepPattern cepPattern = new CepPattern()
-            PatternDelegate patternDelegate = new PatternDelegate(cepPattern, null)
+            CepPatternDelegate patternDelegate = new CepPatternDelegate(cepPattern, null)
             closure.delegate = patternDelegate
             closure.resolveStrategy = Closure.DELEGATE_FIRST
             closure()
@@ -100,6 +103,20 @@ class DslEvaluator {
             def cepPatternMap = [:]
             cepPatternMap[cepPattern] = patternDelegate.pattern
             return cepPatternMap
+        }
+    }
+
+    def executeDslForEvent(dslScript) {
+        executeScript(dslScript, 'event'){ closure ->
+            CepEvent cepEvent = new CepEvent()
+            CepEventDelegate cepEventDelegate = new CepEventDelegate(cepEvent)
+            closure.delegate = cepEventDelegate
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure()
+
+            def cepEventMap = [:]
+            cepEventMap[cepEvent] = cepEventDelegate.patternList
+            return cepEventMap
         }
     }
 }

@@ -12,6 +12,7 @@ public class CepPattern {
     private String id;
     private String name;
     private String type;
+    private double weight;
     private List<String> conditionList;
     private String withinTimeUnit;
     private Integer withinTimeSize;
@@ -110,5 +111,13 @@ public class CepPattern {
 
     public void setNextPattern(CepPattern nextPattern) {
         this.nextPattern = nextPattern;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 }

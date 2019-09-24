@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by luomingxing on 2019/9/23.
  */
-class PatternDelegate {
+class CepPatternDelegate {
     CepPattern cepPattern
     Pattern pattern
 
@@ -38,7 +38,14 @@ class PatternDelegate {
         begin()
     }
 
-    PatternDelegate(CepPattern cepPattern, Pattern pattern){
+    def getWeight(){
+        return this.cepPattern.weight
+    }
+    def setWeight(weight){
+        this.cepPattern.weight = weight
+    }
+
+    CepPatternDelegate(CepPattern cepPattern, Pattern pattern){
         this.cepPattern = cepPattern
         this.pattern = pattern
     }
@@ -89,7 +96,7 @@ class PatternDelegate {
     def methodMissing(String name, Object args) {
         if('condition' == name) {
             def conditionClosure = args[0]
-            conditionClosure.delegate = new PatternDelegate(cepPattern, pattern)
+            conditionClosure.delegate = new CepPatternDelegate(cepPattern, pattern)
             conditionClosure.resolveStrategy = Closure.DELEGATE_FIRST
             conditionClosure()
         } else if('and' == name) {
@@ -115,7 +122,7 @@ class PatternDelegate {
             within()
         } else if('next' == name) {
             def nextClosure = args[0]
-            PatternDelegate patternDelegate = new PatternDelegate(new CepPattern(), pattern)
+            CepPatternDelegate patternDelegate = new CepPatternDelegate(new CepPattern(), pattern)
             nextClosure.delegate = patternDelegate
             nextClosure.resolveStrategy = Closure.DELEGATE_FIRST
             nextClosure()
