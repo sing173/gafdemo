@@ -1,9 +1,12 @@
 package gafdemo;
 
 import com.googlecode.aviator.AviatorEvaluator;
-import gafdemo.function.RuleGFunction;
+import gafdemo.aviator.RuleGFunction;
 import gafdemo.groovy.DslEvaluator;
-import gafdemo.groovy.pogo.*;
+import gafdemo.groovy.pogo.rule.RuleCard;
+import gafdemo.groovy.pogo.rule.RuleFlow;
+import gafdemo.groovy.pogo.rule.RuleSet;
+import gafdemo.groovy.pogo.rule.RuleTable;
 import org.junit.Test;
 
 import java.util.HashMap;

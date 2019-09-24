@@ -4,11 +4,14 @@ import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import com.googlecode.aviator.Options;
 import com.googlecode.aviator.runtime.FunctionArgument;
+import gafdemo.enumerate.CepPatternTimesEnum;
+import org.apache.flink.cep.pattern.Pattern;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -67,6 +70,13 @@ public class TestAviator {
     public void testArg3(){
         if((Boolean) AviatorEvaluator.execute("a = 'a'"))
             System.out.println("in testArg3");
+
+    }
+
+    @Test
+    public void testTime(){
+        TimeUnit timeUnit = TimeUnit.valueOf("SECONDS");
+        System.out.println(timeUnit.toString());
 
     }
 }

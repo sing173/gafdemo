@@ -1,4 +1,4 @@
-package gafdemo.pojo;
+package gafdemo.pojo.rule;
 
 import java.util.ArrayList;
 import java.util.List;

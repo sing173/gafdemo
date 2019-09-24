@@ -1,23 +1,23 @@
-package gafdemo.function;
+package gafdemo.aviator;
 
-import gafdemo.pojo.BaseRule;
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import com.googlecode.aviator.runtime.type.AviatorObject;
+import gafdemo.groovy.pogo.rule.BaseRule;
 
 import java.util.Map;
 
 /**
  *
  * @author luomingxing
- * @date 2019/8/23
+ * @date 2019/9/11
  */
-public class  RuleFunction extends AbstractFunction {
+public class RuleGFunction extends AbstractFunction {
 
     @Override
     public String getName() {
-        return "rule";
+        return "ruleG";
     }
 
     @Override

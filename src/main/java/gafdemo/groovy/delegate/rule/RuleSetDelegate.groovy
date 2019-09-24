@@ -1,7 +1,7 @@
-package gafdemo.groovy.delegate
+package gafdemo.groovy.delegate.rule
 
-import gafdemo.groovy.pogo.Rule
-import gafdemo.groovy.pogo.RuleSet
+import gafdemo.groovy.pogo.rule.Rule
+import gafdemo.groovy.pogo.rule.RuleSet
 
 /**
  * Created by luomingxing on 2019/9/9.

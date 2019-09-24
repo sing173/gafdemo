@@ -1,15 +1,17 @@
 package gafdemo.groovy
 
-import gafdemo.groovy.delegate.RuleCardDelegate
-import gafdemo.groovy.delegate.RuleDelegate
-import gafdemo.groovy.delegate.RuleFlowDelegate
-import gafdemo.groovy.delegate.RuleSetDelegate
-import gafdemo.groovy.delegate.RuleTableDelegate
-import gafdemo.groovy.pogo.Rule
-import gafdemo.groovy.pogo.RuleCard
-import gafdemo.groovy.pogo.RuleFlow
-import gafdemo.groovy.pogo.RuleSet
-import gafdemo.groovy.pogo.RuleTable
+import gafdemo.groovy.delegate.event.PatternDelegate
+import gafdemo.groovy.delegate.rule.RuleCardDelegate
+import gafdemo.groovy.delegate.rule.RuleDelegate
+import gafdemo.groovy.delegate.rule.RuleFlowDelegate
+import gafdemo.groovy.delegate.rule.RuleSetDelegate
+import gafdemo.groovy.delegate.rule.RuleTableDelegate
+import gafdemo.groovy.pogo.rule.Rule
+import gafdemo.groovy.pogo.rule.RuleCard
+import gafdemo.groovy.pogo.rule.RuleFlow
+import gafdemo.groovy.pogo.rule.RuleSet
+import gafdemo.groovy.pogo.rule.RuleTable
+import gafdemo.pojo.event.CepPattern
 
 /**
  * Created by luomingxing on 2019/9/10.
@@ -84,6 +86,20 @@ class DslEvaluator {
             closure()
 
             return ruleFlow
+        }
+    }
+
+    def executeDslForPattern(dslScript) {
+        executeScript(dslScript, 'pattern'){ closure ->
+            CepPattern cepPattern = new CepPattern()
+            PatternDelegate patternDelegate = new PatternDelegate(cepPattern, null)
+            closure.delegate = patternDelegate
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure()
+
+            def cepPatternMap = [:]
+            cepPatternMap[cepPattern] = patternDelegate.pattern
+            return cepPatternMap
         }
     }
 }

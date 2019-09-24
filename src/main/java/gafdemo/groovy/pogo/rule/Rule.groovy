@@ -1,4 +1,4 @@
-package gafdemo.groovy.pogo
+package gafdemo.groovy.pogo.rule
 
 
 /**

@@ -1,6 +1,6 @@
-package gafdemo.groovy.delegate
+package gafdemo.groovy.delegate.rule
 
-import gafdemo.groovy.pogo.BaseRule
+import gafdemo.groovy.pogo.rule.BaseRule
 
 /**
  * Created by luomingxing on 2019/9/9.
@@ -11,10 +11,8 @@ abstract class BaseDelegate {
     /*
         下面这些getter和setter是为了实现下面这种赋值而写的：name = '规则1'和code = 'rule1'
         rule {
-            info {
                 name = '规则1'
                 code = 'rule1'
-            }
         }
     */
     def getName(){

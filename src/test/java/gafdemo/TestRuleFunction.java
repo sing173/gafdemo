@@ -1,8 +1,8 @@
 package gafdemo;
 
-import gafdemo.function.RuleFunction;
+import gafdemo.aviator.RuleFunction;
 import com.googlecode.aviator.AviatorEvaluator;
-import gafdemo.pojo.*;
+import gafdemo.pojo.rule.*;
 import org.junit.Test;
 
 import java.util.HashMap;

@@ -1,8 +1,8 @@
-package gafdemo.groovy.delegate
+package gafdemo.groovy.delegate.rule
 
 import com.googlecode.aviator.AviatorEvaluator
 import com.googlecode.aviator.Expression
-import gafdemo.groovy.pogo.RuleCard
+import gafdemo.groovy.pogo.rule.RuleCard
 
 /**
  * Created by luomingxing on 2019/9/9.

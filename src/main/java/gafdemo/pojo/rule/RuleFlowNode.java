@@ -1,4 +1,4 @@
-package gafdemo.pojo;
+package gafdemo.pojo.rule;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
