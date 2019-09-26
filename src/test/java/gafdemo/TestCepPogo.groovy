@@ -1,13 +1,15 @@
 package gafdemo
 
 import gafdemo.groovy.DslEvaluator
+import gafdemo.groovy.pogo.event.CepEventGroovy
+import gafdemo.groovy.pogo.event.CepPatternGroovy
 
 /**
  * Created by luomingxing on 2019/9/23.
  */
 
 def dslEvaluator = new DslEvaluator()
-HashMap patternMap = dslEvaluator.executeDslForPattern('''
+CepPatternGroovy cepPattern = dslEvaluator.executeDslForPattern('''
                 pattern {
                     name = "frist"
                     type = "begin"
@@ -34,12 +36,9 @@ HashMap patternMap = dslEvaluator.executeDslForPattern('''
                 }
             ''')
 
-patternMap.each {patternMapEntry ->
-    println(patternMapEntry.getKey())
-    println(patternMapEntry.getValue())
-}
+println(cepPattern.name)
 
-HashMap eventMap = dslEvaluator.executeDslForEvent('''
+CepEventGroovy cepEventGroovy = dslEvaluator.executeDslForEvent('''
                 event {
                     id = "1234"
                     name = "childEvent1"
@@ -105,10 +104,12 @@ HashMap eventMap = dslEvaluator.executeDslForEvent('''
                         }
                     }
                 }
-            ''')
+            ''') as CepEventGroovy
 
-eventMap.each {patternMapEntry ->
-    println(patternMapEntry.getKey())
-    println(patternMapEntry.getValue())
-}
+    println(cepEventGroovy.name)
+    if(cepEventGroovy.patternMap != null) {
+        cepEventGroovy.patternMap.each { pattern ->
+            println(pattern.getKey())
+        }
+    }
 

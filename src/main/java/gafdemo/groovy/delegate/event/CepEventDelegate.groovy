@@ -1,39 +1,37 @@
 package gafdemo.groovy.delegate.event
 
-import gafdemo.pojo.event.CepEvent
-import gafdemo.pojo.event.CepPattern
-import org.apache.flink.cep.pattern.Pattern
+import gafdemo.groovy.pogo.event.CepEventGroovy
+import gafdemo.groovy.pogo.event.CepPatternGroovy
 
 /**
  * Created by luomingxing on 2019/9/24.
  */
 class CepEventDelegate {
-    CepEvent cepEvent
-    List<Pattern> patternList = []
+    CepEventGroovy cepEventGroovy
 
     def getId(){
-        return this.cepEvent.id
+        return this.cepEventGroovy.cepEvent.id
     }
     def setId(String id){
-        this.cepEvent.id = id
+        this.cepEventGroovy.cepEvent.id = id
     }
 
     def getName(){
-        return this.cepEvent.name
+        return this.cepEventGroovy.cepEvent.name
     }
     def setName(String name){
-        this.cepEvent.name = name
+        this.cepEventGroovy.cepEvent.name = name
     }
 
     def getType(){
-        return this.cepEvent.type
+        return this.cepEventGroovy.cepEvent.type
     }
     def setType(String type){
-        this.cepEvent.type = type
+        this.cepEventGroovy.cepEvent.type = type
     }
 
-    CepEventDelegate(CepEvent cepEvent){
-        this.cepEvent = cepEvent
+    CepEventDelegate(CepEventGroovy cepEventGroovy){
+        this.cepEventGroovy = cepEventGroovy
     }
 
     def methodMissing(String name, Object args) {
@@ -43,11 +41,7 @@ class CepEventDelegate {
             groupClosure.delegate = cepGroupPatternDelegate
             groupClosure.resolveStrategy = Closure.DELEGATE_FIRST
             groupClosure()
-            //根据权重归纳模式组对象，待事件触发后按权重选择匹配的模式
-            this.cepEvent.patternGroupMap[cepGroupPatternDelegate.weight] =
-                    cepGroupPatternDelegate.cepPatternList as List<CepPattern>
-            //收集flink pattern待生成执行计划时使用
-            patternList.addAll(cepGroupPatternDelegate.patternList)
+            cepEventGroovy.patternMap.putAll(cepGroupPatternDelegate.patternMap)
         }
 
     }
@@ -55,8 +49,7 @@ class CepEventDelegate {
 
 class CepGroupPatternDelegate {
     double weight
-    List<Pattern> patternList = []
-    List<CepPattern> cepPatternList = []
+    Map<String, CepPatternGroovy> patternMap = [:]
 
     def getWeight(){
         return this.weight
@@ -68,14 +61,15 @@ class CepGroupPatternDelegate {
     def methodMissing(String name, Object args) {
         if ('pattern' == name) {
             def patternClosure = args[0]
-            CepPatternDelegate cepPatternDelegate = new CepPatternDelegate(new CepPattern(), null)
+            CepPatternDelegate cepPatternDelegate = new CepPatternDelegate(new CepPatternGroovy())
             patternClosure.delegate = cepPatternDelegate
             patternClosure.resolveStrategy = Closure.DELEGATE_FIRST
             patternClosure()
-            this.patternList << cepPatternDelegate.pattern
-            this.cepPatternList << cepPatternDelegate.cepPattern
+
+            //收集flink pattern待生成执行计划时使用,区分是否包含within的pattern
+            CepPatternGroovy cepPattern = cepPatternDelegate.cepPattern
+            cepPattern.groupWeight = this.weight
+            patternMap[cepPattern.name] = cepPattern
         }
-
-
     }
 }
