@@ -5,15 +5,20 @@ import gafdemo.groovy.DslEvaluator;
 import gafdemo.groovy.pogo.event.CepEventGroovy;
 import gafdemo.groovy.pogo.event.CepPatternGroovy;
 import gafdemo.groovy.pogo.event.DataSourceEvent;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.cep.CEP;
-import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
-import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.IngestionTimeExtractor;
+import org.apache.flink.streaming.api.functions.co.CoMapFunction;
+import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
+import org.apache.flink.util.Collector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -99,19 +104,36 @@ public class DecisionMakingApplication {
         DslEvaluator dslEvaluator = new DslEvaluator();
         CepEventGroovy cepEventGroovy = (CepEventGroovy) dslEvaluator.executeDslForEvent(eventDsl);
 
+        DataStream<DataSourceEvent> dataStream = null;
         for (Map.Entry<String, CepPatternGroovy> patternMap : cepEventGroovy.getPatternMap().entrySet()) {
+            CepPatternGroovy cepPattern = patternMap.getValue();
+
             PatternStream<DataSourceEvent> patternStream = CEP.pattern(
                     inputEventStream.keyBy(cepEventGroovy.getKeyBy()),
-                    patternMap.getValue().getPattern());
+                    cepPattern.getPattern());
 
-            DataStream<Object> timeDataStream = patternStream.select(new PatternSelectFunction<DataSourceEvent, Object>() {
-                @Override
-                public Object select(Map<String, List<DataSourceEvent>> map) throws Exception {
-                    return map.get("f").get(0);
+            MyPatternSelectFunction<DataSourceEvent, DataSourceEvent> selectFunction = new MyPatternSelectFunction<>(cepPattern);
+            if(dataStream == null) {
+                dataStream = patternStream.flatSelect(selectFunction);
+            } else {
+                DataStream<DataSourceEvent> dataStream2 = patternStream.flatSelect(selectFunction);
+                List<DataStream<DataSourceEvent>> dataStreamList = new ArrayList<>();
+                dataStreamList.add(dataStream2);
+
+                DataStream[] dataStreams = new DataStream[dataStreamList.size()];
+                dataStream = dataStream.union(dataStreams)
+                        .keyBy("").reduce(new ReduceFunction<DataSourceEvent>() {
+                    @Override
+                    public DataSourceEvent reduce(DataSourceEvent dataSourceEvent, DataSourceEvent t1) throws Exception {
+                        return null;
+                    }
+                });
+
+            }
+
+            cepEventGroovy.getDataStreamMap().put(cepPattern.getName(), dataStream);
 
 
-                }
-            });
         }
 
 

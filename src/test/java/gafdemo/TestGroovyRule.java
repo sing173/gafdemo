@@ -2,13 +2,36 @@ package gafdemo;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import gafdemo.aviator.RuleGFunction;
+import gafdemo.flink.source.Order;
+import gafdemo.flink.source.OrderSource;
 import gafdemo.groovy.DslEvaluator;
 import gafdemo.groovy.pogo.rule.RuleCard;
 import gafdemo.groovy.pogo.rule.RuleFlow;
 import gafdemo.groovy.pogo.rule.RuleSet;
 import gafdemo.groovy.pogo.rule.RuleTable;
+import gafdemo.pojo.event.CepEvent;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.BroadcastStream;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
+import org.apache.flink.streaming.api.functions.sink.SinkFunction;
+import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
+import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
+import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.util.Collector;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,4 +202,79 @@ public class TestGroovyRule {
         System.out.println("build ruleSet:" + ruleSet.toString());
         env_rule.put("ruleSet1", ruleSet);
     }
+
+    public static void main(String[] args) throws Exception {
+
+//        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+//
+//        // this can be used in a streaming program like this (assuming we have a StreamExecutionEnvironment env)
+//        env.fromElements(Tuple2.of(2L, 3L), Tuple2.of(2L, 5L), Tuple2.of(1L, 7L), Tuple2.of(2L, 4L), Tuple2.of(1L, 2L))
+//                .keyBy(0) // 以数组的第一个元素作为key
+//                .reduce((ReduceFunction<Tuple2<Long, Long>>) (t2, t1) -> new Tuple2<>(t1.f0 + t2.f0, t2.f1 + t1.f1)) // value做累加
+//                .print();
+//
+//        env.execute("execute");
+
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        DataStream<Order> userInfoDataStream = env.addSource(new OrderSource(1));
+        BroadcastStream<Order> userInfoDataStream2 = env.addSource(new OrderSource(2)).broadcast(null);
+        userInfoDataStream.connect(userInfoDataStream2).process(new BroadcastProcessFunction<Order, Order, Object>() {
+            @Override
+            public void processElement(Order order, ReadOnlyContext readOnlyContext, Collector<Object> collector) throws Exception {
+
+
+
+            }
+
+            @Override
+            public void processBroadcastElement(Order order, Context context, Collector<Object> collector) throws Exception {
+
+            }
+        });
+        userInfoDataStream.keyBy("").window(TumblingEventTimeWindows.of(Time.seconds(5)))
+                .process(new ProcessWindowFunction<Order, CepEvent, Tuple, TimeWindow>() {
+            @Override
+            public void process(Tuple tuple, Context context, Iterable<Order> iterable, Collector<CepEvent> collector) throws Exception {
+
+            }
+
+            @Override
+            public void clear(Context context) throws Exception {
+
+                super.clear(context);
+            }
+        }).addSink(new SinkFunction<CepEvent>() {
+            @Override
+            public void invoke(CepEvent value, Context context) throws Exception {
+
+            }
+        });
+
+        DataStream<Order> timedData = userInfoDataStream.assignTimestampsAndWatermarks(new AscendingTimestampExtractor<Order>() {
+            @Override
+            public long extractAscendingTimestamp(Order element) {
+                return element.getMdTime().getTime();
+            }
+        });
+
+        SingleOutputStreamOperator<Order> reduce = timedData
+                .keyBy("id")
+                .timeWindow(Time.seconds(3))
+                .reduce(new ReduceFunction<Order>() {
+                    @Override
+                    public Order reduce(Order t1, Order t2) throws Exception {
+                        if(t1.getVersion() < t2.getVersion()) {
+                            return t2;
+                        } else {
+                            return t1;
+                        }
+                    }
+                });
+
+        reduce.print();
+        env.execute("test");
+    }
+
 }
