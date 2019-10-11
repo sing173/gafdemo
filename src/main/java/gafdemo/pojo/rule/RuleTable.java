@@ -9,6 +9,7 @@ import java.util.Map;
  * @author luomingxing
  * @date 2019/8/27
  */
+@Deprecated
 public class RuleTable extends BaseRule implements AviEvaluation {
     /**
      * 0 简单决策表；1 交叉决策表

@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.datastream.DataStream
 /**
  * Created by luomingxing on 2019/9/25.
  */
-class CepEventGroovy extends DataSourceEvent{
+class CepEventGroovy {
     String id
     String name
     String type
@@ -21,6 +21,6 @@ class CepEventGroovy extends DataSourceEvent{
     /**
      * 模式匹配后的结果，key为模式名称
      */
-    Map<String, DataStream<DataSourceEvent>> dataStreamMap = [:]
+    Map<String, DataStream<CepEventResult>> dataStreamMap = [:]
 
 }

@@ -14,8 +14,6 @@ import gafdemo.groovy.pogo.rule.RuleCard
 import gafdemo.groovy.pogo.rule.RuleFlow
 import gafdemo.groovy.pogo.rule.RuleSet
 import gafdemo.groovy.pogo.rule.RuleTable
-import gafdemo.pojo.event.CepEvent
-import gafdemo.pojo.event.CepPattern
 
 /**
  * Created by luomingxing on 2019/9/10.

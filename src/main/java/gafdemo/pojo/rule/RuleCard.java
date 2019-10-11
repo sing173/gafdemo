@@ -11,6 +11,7 @@ import java.util.Map;
 /**
  * Created by luomingxing on 2019/8/27.
  */
+@Deprecated
 public class RuleCard extends BaseRule implements AviEvaluation{
     private List<Rule> ruleList = new ArrayList<>();
     private String compute;

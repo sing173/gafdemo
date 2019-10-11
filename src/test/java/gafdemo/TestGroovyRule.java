@@ -2,19 +2,16 @@ package gafdemo;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import gafdemo.aviator.RuleGFunction;
-import gafdemo.flink.source.Order;
-import gafdemo.flink.source.OrderSource;
+import gafdemo.pojo.Order;
+import gafdemo.pojo.OrderSource;
 import gafdemo.groovy.DslEvaluator;
+import gafdemo.groovy.pogo.event.DataSourceEvent;
 import gafdemo.groovy.pogo.rule.RuleCard;
 import gafdemo.groovy.pogo.rule.RuleFlow;
 import gafdemo.groovy.pogo.rule.RuleSet;
 import gafdemo.groovy.pogo.rule.RuleTable;
-import gafdemo.pojo.event.CepEvent;
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -24,14 +21,12 @@ import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
-import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -234,9 +229,9 @@ public class TestGroovyRule {
             }
         });
         userInfoDataStream.keyBy("").window(TumblingEventTimeWindows.of(Time.seconds(5)))
-                .process(new ProcessWindowFunction<Order, CepEvent, Tuple, TimeWindow>() {
+                .process(new ProcessWindowFunction<Order, DataSourceEvent, Tuple, TimeWindow>() {
             @Override
-            public void process(Tuple tuple, Context context, Iterable<Order> iterable, Collector<CepEvent> collector) throws Exception {
+            public void process(Tuple tuple, Context context, Iterable<Order> iterable, Collector<DataSourceEvent> collector) throws Exception {
 
             }
 
@@ -245,9 +240,9 @@ public class TestGroovyRule {
 
                 super.clear(context);
             }
-        }).addSink(new SinkFunction<CepEvent>() {
+        }).addSink(new SinkFunction<DataSourceEvent>() {
             @Override
-            public void invoke(CepEvent value, Context context) throws Exception {
+            public void invoke(DataSourceEvent value, Context context) throws Exception {
 
             }
         });

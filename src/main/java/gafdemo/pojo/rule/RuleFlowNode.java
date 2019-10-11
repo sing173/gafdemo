@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * Created by luomingxing on 2019/8/30.
  */
+@Deprecated
 public class RuleFlowNode implements AviEvaluation{
     private RuleFlowNode leftChild;
     private RuleFlowNode rightChild;

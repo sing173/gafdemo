@@ -6,6 +6,7 @@ import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunctio
 
 
 /**
+ *
  * @author luomingxing
  */
 public class MonitoringEventSource extends RichParallelSourceFunction<DataSourceEvent> {

@@ -1,6 +1,6 @@
 package gafdemo.aviator;
 
-import gafdemo.pojo.event.CepEvent;
+import gafdemo.groovy.pogo.event.DataSourceEvent;
 import org.apache.flink.cep.pattern.conditions.IterativeCondition;
 
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by luomingxing on 2019/9/23.
  */
-public class AviatorCondition extends IterativeCondition<CepEvent> implements Serializable {
+public class AviatorCondition extends IterativeCondition<DataSourceEvent> implements Serializable {
     private String expression;
 
     public AviatorCondition(String expression) {
@@ -16,7 +16,7 @@ public class AviatorCondition extends IterativeCondition<CepEvent> implements Se
     }
 
     @Override
-    public boolean filter(CepEvent cepEvent, Context<CepEvent> context) throws Exception {
+    public boolean filter(DataSourceEvent cepEvent, Context<DataSourceEvent> context) throws Exception {
         return false;
     }
 }

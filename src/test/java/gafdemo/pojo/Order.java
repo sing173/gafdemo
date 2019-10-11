@@ -1,4 +1,4 @@
-package gafdemo.flink.source;
+package gafdemo.pojo;
 
 
 import groovy.transform.ToString;

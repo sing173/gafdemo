@@ -66,7 +66,7 @@ class CepGroupPatternDelegate {
             patternClosure.resolveStrategy = Closure.DELEGATE_FIRST
             patternClosure()
 
-            //收集flink pattern待生成执行计划时使用,区分是否包含within的pattern
+            //收集flink pattern待生成执行计划时使用
             CepPatternGroovy cepPattern = cepPatternDelegate.cepPattern
             cepPattern.groupWeight = this.weight
             patternMap[cepPattern.name] = cepPattern

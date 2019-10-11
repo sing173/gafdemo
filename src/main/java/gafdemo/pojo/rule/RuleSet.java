@@ -7,6 +7,7 @@ import java.util.Map;
 /**
  * Created by luomingxing on 2019/8/27.
  */
+@Deprecated
 public class RuleSet extends BaseRule implements AviEvaluation {
     /**
      * 0 优先模式；1 贪婪模式

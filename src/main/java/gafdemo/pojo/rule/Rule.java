@@ -13,6 +13,7 @@ import java.util.Map;
  * @author luomingxing
  * @date 2019/8/26
  */
+@Deprecated
 public class Rule extends BaseRule implements AviEvaluation {
 
     private String filter;

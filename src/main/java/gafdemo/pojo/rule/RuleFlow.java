@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Created by luomingxing on 2019/8/27.
  */
+@Deprecated
 public class RuleFlow extends BaseRule implements AviEvaluation {
     private RuleFlowNode treeRoot;
     private Map<String, Object> env;

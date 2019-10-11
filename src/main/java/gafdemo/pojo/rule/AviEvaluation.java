@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Created by luomingxing on 2019/8/27.
  */
+@Deprecated
 public interface AviEvaluation {
     Boolean execute(Map<String, Object> env) ;
 }

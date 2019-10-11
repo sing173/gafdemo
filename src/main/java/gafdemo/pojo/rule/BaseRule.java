@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Created by luomingxing on 2019/8/28.
  */
+@Deprecated
 public class BaseRule implements AviEvaluation{
     protected String id;
     protected String name;
