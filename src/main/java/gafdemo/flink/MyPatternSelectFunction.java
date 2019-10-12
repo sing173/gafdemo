@@ -16,38 +16,34 @@ import java.util.Map;
  */
 public class MyPatternSelectFunction implements PatternFlatSelectFunction<DataSourceEvent, CepEventResult> {
     private CepPatternGroovy cepPattern;
+    private List<String> allPatternName;
 
     public MyPatternSelectFunction(CepPatternGroovy cepPattern){
         this.cepPattern = cepPattern;
-
+        this.allPatternName = cepPattern.getAllPatternName(new ArrayList<>(), cepPattern.getPattern());
     }
 
     @Override
     public void flatSelect(Map<String, List<DataSourceEvent>> patternMap, Collector<CepEventResult> collector) {
-        Pattern pattern = cepPattern.getPattern();
-        List<String> patternNames = getAllPatternName(new ArrayList<>(), pattern);
-
+        CepEventResult cepEventResult = new CepEventResult();
+        assert allPatternName != null;
+        //拿第一个命中事件即当前事件
+        cepEventResult.setHitPattern(cepPattern.getName());
+        List<DataSourceEvent> currEventList = patternMap.get(allPatternName.get(0));
+        DataSourceEvent currDataSourceEvent = currEventList.get(currEventList.size() -1);
+        cepEventResult.setSeqNo(currDataSourceEvent.getSeqNo());
+        //TODO 最终结果处理
+        cepEventResult.setResult(currDataSourceEvent.getResult());
         //遍历每个模式，获取命中模式的事件源
-        patternNames.forEach(patternName -> {
-            List<DataSourceEvent> dataSourceEvent = patternMap.get(patternName);
-            //TODO 根据业务逻辑加工事件输出附加结果DataSourceEvent.result
+        allPatternName.forEach(patternName -> {
+            List<DataSourceEvent> dataSourceEvents = patternMap.get(patternName);
+            //TODO 根据业务逻辑加工事件输出
+            cepEventResult.getHitPatternEventMap().put(patternName, dataSourceEvents);
 
 
-
-
-            collector.collect(null);
         });
-
-
-
+        collector.collect(cepEventResult);
     }
 
-    private List<String> getAllPatternName(List<String> patternNames, Pattern pattern){
-        patternNames.add(pattern.getName());
-        Pattern prePattern = pattern.getPrevious();
-        if(prePattern != null) {
-            getAllPatternName(patternNames, prePattern);
-        }
-        return patternNames;
-    }
+
 }

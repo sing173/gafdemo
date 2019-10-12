@@ -1,28 +1,26 @@
 package gafdemo.flink;
 
-import gafdemo.flink.source.MonitoringEventSource;
+import com.googlecode.aviator.AviatorEvaluator;
+import gafdemo.aviator.RuleGFunction;
+import gafdemo.flink.source.DemoEventSource;
 import gafdemo.groovy.DslEvaluator;
 import gafdemo.groovy.pogo.event.CepEventGroovy;
 import gafdemo.groovy.pogo.event.CepEventResult;
 import gafdemo.groovy.pogo.event.CepPatternGroovy;
 import gafdemo.groovy.pogo.event.DataSourceEvent;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.IngestionTimeExtractor;
-import org.apache.flink.streaming.api.functions.co.CoMapFunction;
-import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,31 +31,32 @@ public class DecisionMakingApplication {
             "    id = \"1234\"\n" +
             "    name = \"childEvent1\"\n" +
             "    type = \"risk\"\n" +
+            "    keyBy = \"cardNo\"\n" +
             "    patternGroup {\n" +
             "        weight = 1\n" +
             "        pattern {\n" +
-            "            name = \"first\"\n" +
+            "            name = \"pattern1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-            "                and(\"rule(rule1)\")\n" +
-            "                or(\"rule(rule2)\")\n" +
+//            "                and(\"event.cardNo > 10 && event.cardNo < 20\")\n" +
+            "                and(\"event.trade > 1000\")\n" +
             "            }\n" +
             "            next {\n" +
-            "                name = \"second\"\n" +
+            "                name = \"pattern1_second\"\n" +
             "                type = \"next\"\n" +
             "                condition {\n" +
-            "                    and(\"rule(rule3)\")\n" +
+            "                    and(\"event.cardNo > 30\")\n" +
             "                }\n" +
-            "                times('oneOrMore', 4)\n" +
+            "                times('times', 2)\n" +
             "                next {\n" +
-            "                    name = \"third\"\n" +
+            "                    name = \"pattern1_third\"\n" +
             "                    type = \"followedBy\"\n" +
             "                    condition {\n" +
-            "                        and(\"rule(rule4)\")\n" +
+            "                        and(\"event.trade > 100\")\n" +
             "                    }\n" +
             "                }\n" +
             "            }\n" +
-            "            within('DAYS', 1)\n" +
+            "            within('SECONDS', 10)\n" +
             "        }\n" +
             "        pattern {\n" +
             "            weight = 2\n" +
@@ -65,9 +64,15 @@ public class DecisionMakingApplication {
             "            subtype = \"childEvent1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-            "                and(\"rule(ruleSet)\")\n" +
+            "                and(\"event.trade > 5000\")\n" +
             "            }\n" +
-            "            \n" +
+            "                next {\n" +
+            "                    name = \"pattern2_third\"\n" +
+            "                    type = \"followedBy\"\n" +
+            "                    condition {\n" +
+            "                        and(\"event.trade > 6000\")\n" +
+            "                    }\n" +
+            "                }\n" +
             "        }\n" +
             "        pattern {\n" +
             "            weight = 3\n" +
@@ -75,7 +80,7 @@ public class DecisionMakingApplication {
             "            subtype = \"childEvent1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-            "                and(\"rule(rule5)\")\n" +
+            "                and(\"event.trade > 3000\")\n" +
             "            }\n" +
             "            \n" +
             "        }\n" +
@@ -88,7 +93,7 @@ public class DecisionMakingApplication {
             "            subtype = \"childEvent1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-            "                and(\"rule(rule8)\")\n" +
+            "                and(\"event.cardNo < 20\")\n" +
             "            }\n" +
             "            \n" +
             "        }\n" +
@@ -97,41 +102,50 @@ public class DecisionMakingApplication {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
+        env.setParallelism(1);
 
+        //定义Aviator自定义规则函数
+        AviatorEvaluator.addFunction(new RuleGFunction());
+
+        //初始化数据源
         DataStream<DataSourceEvent> inputEventStream = env
-                .addSource(new MonitoringEventSource())
+                .addSource(new DemoEventSource())
                 .assignTimestampsAndWatermarks(new IngestionTimeExtractor<>());
 
+        //解析事件模式配置
         DslEvaluator dslEvaluator = new DslEvaluator();
         CepEventGroovy cepEventGroovy = (CepEventGroovy) dslEvaluator.executeDslForEvent(eventDsl);
 
+        //构建一个事件的所有模式流
+        DataStream<CepEventResult> dataStream = null;
         for (Map.Entry<String, CepPatternGroovy> patternMap : cepEventGroovy.getPatternMap().entrySet()) {
             CepPatternGroovy cepPattern = patternMap.getValue();
-
+            //创建模式流
             PatternStream<DataSourceEvent> patternStream = CEP.pattern(
                     inputEventStream.keyBy(cepEventGroovy.getKeyBy()),
                     cepPattern.getPattern());
-
+            //创建模式匹配后的处理函数
             MyPatternSelectFunction selectFunction = new MyPatternSelectFunction(cepPattern);
-            DataStream<CepEventResult> dataStream = patternStream.flatSelect(selectFunction);
-            cepEventGroovy.getDataStreamMap().put(cepPattern.getName(), dataStream);
+            //把模式流合并起来统一处理（权重计算、组装唯一输出）
+            if(dataStream == null) {
+                dataStream = patternStream.flatSelect(selectFunction);
+            } else {
+                dataStream = dataStream.union(patternStream.flatSelect(selectFunction));
+            }
         }
-
-        List<DataStream> dataStreamList = new ArrayList<>();
-        dataStreamList.addAll(cepEventGroovy.getDataStreamMap().values());
-
-        DataStream[] dataStreams = new DataStream[dataStreamList.size()];
-        DataStream<CepEventResult> dataStreamResult = dataStreamList.get(0).union(dataStreams)
-                .keyBy("").timeWindow(Time.seconds(1)).process(new ProcessWindowFunction() {
+        assert dataStream != null;
+        //统一处理一个事件下所有命中的模式流
+        dataStream.keyBy("seqNo")
+                .timeWindow(Time.seconds(1))
+                .process(new ProcessWindowFunction<CepEventResult, CepEventResult, Tuple, TimeWindow>() {
                     @Override
-                    public void process(Object o, Context context, Iterable iterable, Collector collector) throws Exception {
-
-
-
+                    public void process(Tuple tuple, Context context, Iterable<CepEventResult> iterable, Collector<CepEventResult> collector) {
+                        //TODO 权重计算、合并结果、对外输出等
+                        iterable.forEach(collector::collect);
                     }
-                });
+                })
+                .print();
 
         env.execute("DecisionMaking job");
     }

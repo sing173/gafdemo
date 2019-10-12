@@ -1,19 +1,24 @@
 package gafdemo.groovy.pogo.event;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by luomingxing on 2019/9/24.
  */
-public class DataSourceEvent {
-    protected String seqNo;
-    protected String eventType;
-    protected String eventTime;
-    protected long statusCode;
+public class DataSourceEvent implements Serializable {
+    private String seqNo;
+    private String eventType;
+    private String eventTime;
+    private long statusCode;
+    private String cardNo;
 
     protected Map<String, Object> data;
 
     protected Map<String, Object> result;
+
+    private Map<String, Object> aviatorEnv = new HashMap<>();
 
     public String getSeqNo() {
         return seqNo;
@@ -53,6 +58,7 @@ public class DataSourceEvent {
 
     public void setData(Map<String, Object> data) {
         this.data = data;
+
     }
 
     public Map<String, Object> getResult() {
@@ -63,4 +69,20 @@ public class DataSourceEvent {
         this.result = result;
     }
 
+    public void setAviatorEnv(Map<String, Object> data){
+        Map<String, Object> aviatorEnvEvent = new HashMap<>(data);
+        aviatorEnv.put("event", aviatorEnvEvent);
+    }
+
+    public Map<String, Object> getAviatorEnv(){
+        return this.aviatorEnv;
+    }
+
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
 }

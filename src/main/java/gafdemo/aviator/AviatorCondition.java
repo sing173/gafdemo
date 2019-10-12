@@ -1,5 +1,7 @@
 package gafdemo.aviator;
 
+import com.googlecode.aviator.AviatorEvaluator;
+import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import gafdemo.groovy.pogo.event.DataSourceEvent;
 import org.apache.flink.cep.pattern.conditions.IterativeCondition;
 
@@ -16,7 +18,7 @@ public class AviatorCondition extends IterativeCondition<DataSourceEvent> implem
     }
 
     @Override
-    public boolean filter(DataSourceEvent cepEvent, Context<DataSourceEvent> context) throws Exception {
-        return false;
+    public boolean filter(DataSourceEvent cepEvent, Context<DataSourceEvent> context) {
+        return (Boolean) AviatorEvaluator.execute(expression, cepEvent.getAviatorEnv());
     }
 }

@@ -58,7 +58,7 @@ CepEventGroovy cepEventGroovy = dslEvaluator.executeDslForEvent('''
                                 condition {
                                     and("rule(rule3)")
                                 }
-                                times('oneOrMore', 4)
+                                times('timesOrMore', 4)
                                 next {
                                     name = "third"
                                     type = "followedBy"

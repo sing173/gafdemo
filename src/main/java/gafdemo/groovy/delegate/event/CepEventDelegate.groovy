@@ -10,24 +10,31 @@ class CepEventDelegate {
     CepEventGroovy cepEventGroovy
 
     def getId(){
-        return this.cepEventGroovy.cepEvent.id
+        return this.cepEventGroovy.id
     }
     def setId(String id){
-        this.cepEventGroovy.cepEvent.id = id
+        this.cepEventGroovy.id = id
     }
 
     def getName(){
-        return this.cepEventGroovy.cepEvent.name
+        return this.cepEventGroovy.name
     }
     def setName(String name){
-        this.cepEventGroovy.cepEvent.name = name
+        this.cepEventGroovy.name = name
     }
 
     def getType(){
-        return this.cepEventGroovy.cepEvent.type
+        return this.cepEventGroovy.type
     }
     def setType(String type){
-        this.cepEventGroovy.cepEvent.type = type
+        this.cepEventGroovy.type = type
+    }
+
+    def getKeyBy(){
+        return this.cepEventGroovy.keyBy
+    }
+    def setKeyBy(String keyBy){
+        this.cepEventGroovy.keyBy = keyBy
     }
 
     CepEventDelegate(CepEventGroovy cepEventGroovy){
@@ -61,13 +68,13 @@ class CepGroupPatternDelegate {
     def methodMissing(String name, Object args) {
         if ('pattern' == name) {
             def patternClosure = args[0]
-            CepPatternDelegate cepPatternDelegate = new CepPatternDelegate(new CepPatternGroovy())
+            CepPatternGroovy cepPattern = new CepPatternGroovy()
+            CepPatternDelegate cepPatternDelegate = new CepPatternDelegate(cepPattern)
             patternClosure.delegate = cepPatternDelegate
             patternClosure.resolveStrategy = Closure.DELEGATE_FIRST
             patternClosure()
 
             //收集flink pattern待生成执行计划时使用
-            CepPatternGroovy cepPattern = cepPatternDelegate.cepPattern
             cepPattern.groupWeight = this.weight
             patternMap[cepPattern.name] = cepPattern
         }

@@ -11,6 +11,7 @@ public class CepEvent {
     private String id;
     private String name;
     private String type;
+    private String keyBy;
 
     private Map<Double, List<CepPattern>> patternGroupMap = new HashMap<>();
 
@@ -44,5 +45,13 @@ public class CepEvent {
 
     public void setPatternGroupMap(Map<Double, List<CepPattern>> patternGroupMap) {
         this.patternGroupMap = patternGroupMap;
+    }
+
+    public String getKeyBy() {
+        return keyBy;
+    }
+
+    public void setKeyBy(String keyBy) {
+        this.keyBy = keyBy;
     }
 }

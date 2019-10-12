@@ -124,13 +124,10 @@ class CepPatternDelegate {
             within(withinTimeUnit, withinTimeSize)
         } else if('next' == name) {
             def nextClosure = args[0]
-            CepPatternGroovy cepPatternGroovy = new CepPatternGroovy()
-            cepPatternGroovy.pattern = this.cepPattern.pattern
-            CepPatternDelegate patternDelegate = new CepPatternDelegate(cepPatternGroovy)
+            CepPatternDelegate patternDelegate = new CepPatternDelegate(this.cepPattern)
             nextClosure.delegate = patternDelegate
             nextClosure.resolveStrategy = Closure.DELEGATE_FIRST
             nextClosure()
-
         }
 
 
