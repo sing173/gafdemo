@@ -24,6 +24,13 @@ class CepPatternDelegate {
         this.cepPattern.id = id
     }
 
+    def getMainName(){
+        return this.cepPattern.mainName
+    }
+    def setMainName(String mainName){
+        this.cepPattern.mainName = mainName
+    }
+
     def getName(){
         return this.cepPattern.name
     }

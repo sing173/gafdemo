@@ -10,6 +10,11 @@ class CepEventResult implements Serializable{
     CepPatternGroovy patternGroovy
 
     /**
+     * 触发事件的最后一个请求，即当前请求
+     */
+    DataSourceEvent currentDataSourceEvent
+
+    /**
      * 命中后的输出变量
      */
     Map<String, Object> result = [:]
@@ -21,19 +26,31 @@ class CepEventResult implements Serializable{
 
     @Override
     String toString() {
-        def outPut = ""
+        def allOutPut = ""
         hitPatternEventMap.each {map ->
+            def outPut
             def patternName = map.key
-            outPut += "\npatternName:$patternName------\n"
+            if(outPut == null) {
+                outPut = "hitPatternName:$patternName------\n"
+            } else {
+                outPut += "\nhitPatternName:$patternName------\n"
+            }
+            allOutPut += outPut
             List<DataSourceEvent> dataSourceEventList = map.value
             dataSourceEventList.each {dataSourceEvent ->
+                def outPut2
                 def seqNo = dataSourceEvent.seqNo
-                outPut += "\nevent seqNo:$seqNo"
+                if(outPut2 == null) {
+                    outPut2 = "event seqNo:$seqNo,"
+                } else {
+                    outPut2 += "\nevent seqNo:$seqNo,"
+                }
+
+                allOutPut += outPut2 + "$dataSourceEvent.data\n"
             }
         }
 
-//        return "current seqNo:$seqNo,hitPattern:$hitPattern\n $outPut"
-        return outPut
+        return allOutPut
     }
 
 }

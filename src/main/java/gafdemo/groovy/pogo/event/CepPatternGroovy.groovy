@@ -7,11 +7,15 @@ import org.apache.flink.cep.pattern.Pattern
  */
 class CepPatternGroovy implements Serializable{
     String id
+    String mainName
     String name
     String type
     double groupWeight
     double weight
 
+    /**
+     * CepPatternGroovy需要序列化后才能传入PatternFlatSelectFunction,而Pattern不能序列化
+     */
     transient Pattern<DataSourceEvent, DataSourceEvent> pattern
 
     List<String> getAllPatternName(List<String> patternNames, Pattern pattern){

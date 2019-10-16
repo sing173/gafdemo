@@ -20,6 +20,7 @@ public class MyPatternSelectFunction implements PatternFlatSelectFunction<DataSo
 
     public MyPatternSelectFunction(CepPatternGroovy cepPattern){
         this.cepPattern = cepPattern;
+        //CepPatternGroovy中的pattern对象不能序列号，所以先获取模式链下所有模式名称
         this.allPatternName = cepPattern.getAllPatternName(new ArrayList<>(), cepPattern.getPattern());
     }
 
@@ -27,10 +28,12 @@ public class MyPatternSelectFunction implements PatternFlatSelectFunction<DataSo
     public void flatSelect(Map<String, List<DataSourceEvent>> patternMap, Collector<CepEventResult> collector) {
         CepEventResult cepEventResult = new CepEventResult();
         assert allPatternName != null;
-        //拿第一个命中事件即当前事件
-        cepEventResult.setHitPattern(cepPattern.getName());
+        //模式链名称
+        cepEventResult.setHitPattern(cepPattern.getMainName());
+        //拿第一个命中事件源即当前事件源
         List<DataSourceEvent> currEventList = patternMap.get(allPatternName.get(0));
         DataSourceEvent currDataSourceEvent = currEventList.get(currEventList.size() -1);
+        cepEventResult.setCurrentDataSourceEvent(currDataSourceEvent);
         cepEventResult.setSeqNo(currDataSourceEvent.getSeqNo());
         //TODO 最终结果处理
         cepEventResult.setResult(currDataSourceEvent.getResult());

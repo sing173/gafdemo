@@ -35,24 +35,26 @@ public class DecisionMakingApplication {
             "    patternGroup {\n" +
             "        weight = 1\n" +
             "        pattern {\n" +
-            "            name = \"pattern1\"\n" +
+            "           weight = 2\n" +
+            "            mainName = \"pattern1\"\n" +
+            "            name = \"pattern1_1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-//            "                and(\"event.cardNo > 10 && event.cardNo < 20\")\n" +
-            "                and(\"event.trade > 1000\")\n" +
+            "                and(\"event.cardNo > 10 && event.cardNo < 30\")\n" +
+            "                or(\"event.trade < 1000\")\n" +
             "            }\n" +
             "            next {\n" +
-            "                name = \"pattern1_second\"\n" +
+            "                name = \"pattern1_2\"\n" +
             "                type = \"next\"\n" +
             "                condition {\n" +
             "                    and(\"event.cardNo > 30\")\n" +
             "                }\n" +
             "                times('times', 2)\n" +
             "                next {\n" +
-            "                    name = \"pattern1_third\"\n" +
+            "                    name = \"pattern1_3\"\n" +
             "                    type = \"followedBy\"\n" +
             "                    condition {\n" +
-            "                        and(\"event.trade > 100\")\n" +
+            "                        and(\"event.trade < 3000\")\n" +
             "                    }\n" +
             "                }\n" +
             "            }\n" +
@@ -60,14 +62,15 @@ public class DecisionMakingApplication {
             "        }\n" +
             "        pattern {\n" +
             "            weight = 2\n" +
-            "            name = \"pattern2\"\n" +
+            "            mainName = \"pattern2\"\n" +
+            "            name = \"pattern2_1\"\n" +
             "            subtype = \"childEvent1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
             "                and(\"event.trade > 5000\")\n" +
             "            }\n" +
             "                next {\n" +
-            "                    name = \"pattern2_third\"\n" +
+            "                    name = \"pattern2_2\"\n" +
             "                    type = \"followedBy\"\n" +
             "                    condition {\n" +
             "                        and(\"event.trade > 6000\")\n" +
@@ -76,11 +79,12 @@ public class DecisionMakingApplication {
             "        }\n" +
             "        pattern {\n" +
             "            weight = 3\n" +
-            "            name = \"pattern3\"\n" +
+            "            mainName = \"pattern3\"\n" +
+            "            name = \"pattern3_1\"\n" +
             "            subtype = \"childEvent1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-            "                and(\"event.trade > 3000\")\n" +
+            "                and(\"event.trade > 3000 && event.trade < 5000\")\n" +
             "            }\n" +
             "            \n" +
             "        }\n" +
@@ -89,11 +93,12 @@ public class DecisionMakingApplication {
             "        weight = 2\n" +
             "        pattern {\n" +
             "            weight = 5\n" +
-            "            name = \"patternGroup2\"\n" +
+            "            mainName = \"patternGroup2\"\n" +
+            "            name = \"patternGroup2_1\"\n" +
             "            subtype = \"childEvent1\"\n" +
             "            type = \"begin\"\n" +
             "            condition {\n" +
-            "                and(\"event.cardNo < 20\")\n" +
+            "                and(\"event.cardNo < 10\")\n" +
             "            }\n" +
             "            \n" +
             "        }\n" +
@@ -103,7 +108,7 @@ public class DecisionMakingApplication {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
-        env.setParallelism(1);
+        env.setParallelism(10);
 
         //定义Aviator自定义规则函数
         AviatorEvaluator.addFunction(new RuleGFunction());
@@ -123,7 +128,7 @@ public class DecisionMakingApplication {
             CepPatternGroovy cepPattern = patternMap.getValue();
             //创建模式流
             PatternStream<DataSourceEvent> patternStream = CEP.pattern(
-                    inputEventStream.keyBy(cepEventGroovy.getKeyBy()),
+                    inputEventStream.keyBy(dataSourceEvent -> dataSourceEvent.getData().get(cepEventGroovy.getKeyBy())),
                     cepPattern.getPattern());
             //创建模式匹配后的处理函数
             MyPatternSelectFunction selectFunction = new MyPatternSelectFunction(cepPattern);
@@ -136,8 +141,9 @@ public class DecisionMakingApplication {
         }
         assert dataStream != null;
         //统一处理一个事件下所有命中的模式流
-        dataStream.keyBy("seqNo")
-                .timeWindow(Time.seconds(1))
+        dataStream
+                .keyBy("seqNo")
+                .timeWindow(Time.milliseconds(3))
                 .process(new ProcessWindowFunction<CepEventResult, CepEventResult, Tuple, TimeWindow>() {
                     @Override
                     public void process(Tuple tuple, Context context, Iterable<CepEventResult> iterable, Collector<CepEventResult> collector) {

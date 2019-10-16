@@ -12,11 +12,9 @@ public class DataSourceEvent implements Serializable {
     private String eventType;
     private String eventTime;
     private long statusCode;
-    private String cardNo;
 
-    protected Map<String, Object> data;
-
-    protected Map<String, Object> result;
+    private Map<String, Object> data;
+    private Map<String, Object> result;
 
     private Map<String, Object> aviatorEnv = new HashMap<>();
 
@@ -76,13 +74,5 @@ public class DataSourceEvent implements Serializable {
 
     public Map<String, Object> getAviatorEnv(){
         return this.aviatorEnv;
-    }
-
-    public String getCardNo() {
-        return cardNo;
-    }
-
-    public void setCardNo(String cardNo) {
-        this.cardNo = cardNo;
     }
 }
