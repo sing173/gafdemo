@@ -75,4 +75,12 @@ public class DataSourceEvent implements Serializable {
     public Map<String, Object> getAviatorEnv(){
         return this.aviatorEnv;
     }
+
+    @Override
+    public String toString() {
+        return "DataSourceEvent {"
+                +"seqNo='" + seqNo
+                +"',time='" + getEventTime()
+                +"',data=" + data;
+    }
 }

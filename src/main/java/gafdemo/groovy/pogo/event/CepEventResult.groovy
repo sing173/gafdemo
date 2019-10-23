@@ -26,31 +26,27 @@ class CepEventResult implements Serializable{
 
     @Override
     String toString() {
-        def allOutPut = ""
-        hitPatternEventMap.each {map ->
-            def outPut
-            def patternName = map.key
-            if(outPut == null) {
-                outPut = "hitPatternName:$patternName------\n"
-            } else {
-                outPut += "\nhitPatternName:$patternName------\n"
-            }
-            allOutPut += outPut
-            List<DataSourceEvent> dataSourceEventList = map.value
-            dataSourceEventList.each {dataSourceEvent ->
-                def outPut2
-                def seqNo = dataSourceEvent.seqNo
-                if(outPut2 == null) {
-                    outPut2 = "event seqNo:$seqNo,"
+        if(hitPatternEventMap != null && hitPatternEventMap.size() > 0) {
+            def allOutPut = ""
+            hitPatternEventMap.each {map ->
+                def outPut
+                def patternName = map.key
+                if(outPut == null) {
+                    outPut = "hitPatternName:$patternName------\n"
                 } else {
-                    outPut2 += "\nevent seqNo:$seqNo,"
+                    outPut += "\nhitPatternName:$patternName------\n"
                 }
-
-                allOutPut += outPut2 + "$dataSourceEvent.data\n"
+                allOutPut += outPut
+                List<DataSourceEvent> dataSourceEventList = map.value
+                dataSourceEventList.each {dataSourceEvent ->
+                    allOutPut += "$dataSourceEvent\n"
+                }
             }
+            return allOutPut
+        } else {
+            return currentDataSourceEvent
         }
 
-        return allOutPut
     }
 
 }

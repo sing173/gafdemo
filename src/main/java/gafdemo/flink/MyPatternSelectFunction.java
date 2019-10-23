@@ -26,10 +26,12 @@ public class MyPatternSelectFunction implements PatternFlatSelectFunction<DataSo
 
     @Override
     public void flatSelect(Map<String, List<DataSourceEvent>> patternMap, Collector<CepEventResult> collector) {
+        System.out.println("pattern select "+System.currentTimeMillis()+"");
         CepEventResult cepEventResult = new CepEventResult();
         assert allPatternName != null;
         //模式链名称
         cepEventResult.setHitPattern(cepPattern.getMainName());
+        cepEventResult.setPatternGroovy(cepPattern);
         //拿第一个命中事件源即当前事件源
         List<DataSourceEvent> currEventList = patternMap.get(allPatternName.get(0));
         DataSourceEvent currDataSourceEvent = currEventList.get(currEventList.size() -1);
