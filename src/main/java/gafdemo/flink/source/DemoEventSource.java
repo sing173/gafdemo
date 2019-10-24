@@ -29,7 +29,7 @@ public class DemoEventSource extends RichParallelSourceFunction<DataSourceEvent>
             dataMap.put("cardNo", cardNo);
             dataMap.put("trade", random.nextInt(10000));
             dataSourceEvent.setData(dataMap);
-            dataSourceEvent.setAviatorEnv(dataMap);
+            dataSourceEvent.setAviatorEnv("event", dataMap);
             System.out.println("build event -- seqNo:"+dataSourceEvent.getSeqNo()+",cardNo:"+dataMap.get("cardNo")+",trade:"+dataMap.get("trade")+",time:"+dataSourceEvent.getEventTime());
             sourceContext.collect(dataSourceEvent);
 

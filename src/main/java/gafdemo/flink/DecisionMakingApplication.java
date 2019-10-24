@@ -8,6 +8,7 @@ import gafdemo.groovy.pogo.event.CepEventGroovy;
 import gafdemo.groovy.pogo.event.CepEventResult;
 import gafdemo.groovy.pogo.event.CepPatternGroovy;
 import gafdemo.groovy.pogo.event.DataSourceEvent;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
@@ -60,6 +61,7 @@ public class DecisionMakingApplication {
             "                    type = \"followedBy\"\n" +
             "                    condition {\n" +
             "                        and(\"event.trade < 3000\")\n" +
+            "                        and(\"result_code1 = event.cardNo;event.trade < 3000\")\n" +
             "                    }\n" +
             "                }\n" +
             "            }\n" +
@@ -114,6 +116,7 @@ public class DecisionMakingApplication {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
         env.setParallelism(1);
+        env.setBufferTimeout(1);
 
         //定义Aviator自定义规则函数
         AviatorEvaluator.addFunction(new RuleGFunction());
@@ -147,32 +150,41 @@ public class DecisionMakingApplication {
         dataStream
                 .keyBy("seqNo")
                 .timeWindow(Time.milliseconds(10))
-                .reduce(new ReduceFunction<CepEventResult>() {
+//                .reduce(new ReduceFunction<CepEventResult>() {
+//                    @Override
+//                    public CepEventResult reduce(CepEventResult cepEventResult, CepEventResult t1) throws Exception {
+//                        System.out.println("dataStream process "+System.currentTimeMillis());
+//                        return cepEventResult.getPatternGroovy().getWeight() > t1.getPatternGroovy().getWeight() ?
+//                                cepEventResult :
+//                                t1;
+//                    }
+//                })
+                .process(new ProcessWindowFunction<CepEventResult, CepEventResult, Tuple, TimeWindow>() {
                     @Override
-                    public CepEventResult reduce(CepEventResult cepEventResult, CepEventResult t1) throws Exception {
-                        System.out.println("dataStream process "+System.currentTimeMillis());
-                        return cepEventResult.getPatternGroovy().getWeight() > t1.getPatternGroovy().getWeight() ?
-                                cepEventResult :
-                                t1;
+                    public void process(Tuple tuple, Context context, Iterable<CepEventResult> iterable, Collector<CepEventResult> collector) {
+                        System.out.println("dataStream process "+System.currentTimeMillis() + " " + tuple.toString());
+                        //TODO 只命中默认模式时直接输出当前事件数据
+                        if(iterable.spliterator().getExactSizeIfKnown() == 1) {
+                            CepEventResult cepEventResult = iterable.iterator().next();
+                            collector.collect(cepEventResult);
+                        } else {
+                            //TODO 权重计算、合并结果、对外输出等
+                            iterable.forEach(cepEventResult -> {
+                                //排除默认模式
+                                if(!"default".equals(cepEventResult.getHitPattern())) {
+                                    long startTime = Long.valueOf(cepEventResult.getCurrentDataSourceEvent().getEventTime());
+                                    System.out.println("decision total time = "+ (System.currentTimeMillis() - startTime) +";key = " + tuple.toString());
+                                    collector.collect(cepEventResult);
+                                }
+                            });
+                        }
                     }
                 })
-//                .process(new ProcessWindowFunction<CepEventResult, CepEventResult, Tuple, TimeWindow>() {
+//                .map(new MapFunction<CepEventResult, Object>() {
 //                    @Override
-//                    public void process(Tuple tuple, Context context, Iterable<CepEventResult> iterable, Collector<CepEventResult> collector) {
-//                        System.out.println("dataStream process "+System.currentTimeMillis() + " " + tuple.toString());
-//                        //TODO 只命中默认模式时直接输出当前事件数据
-//                        if(iterable.spliterator().getExactSizeIfKnown() == 1) {
-//                            CepEventResult cepEventResult = iterable.iterator().next();
-//                            collector.collect(cepEventResult);
-//                        } else {
-//                            //TODO 权重计算、合并结果、对外输出等
-//                            iterable.forEach(cepEventResult -> {
-//                                //排除默认模式
-//                                if(!"default".equals(cepEventResult.getHitPattern())) {
-//                                    collector.collect(cepEventResult);
-//                                }
-//                            });
-//                        }
+//                    public Object map(CepEventResult cepEventResult) throws Exception {
+//                        System.out.println("dataStream process "+System.currentTimeMillis());
+//                        return cepEventResult;
 //                    }
 //                })
                 .print();

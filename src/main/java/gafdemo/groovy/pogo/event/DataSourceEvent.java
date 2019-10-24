@@ -67,9 +67,9 @@ public class DataSourceEvent implements Serializable {
         this.result = result;
     }
 
-    public void setAviatorEnv(Map<String, Object> data){
+    public void setAviatorEnv(String key, Map<String, Object> data){
         Map<String, Object> aviatorEnvEvent = new HashMap<>(data);
-        aviatorEnv.put("event", aviatorEnvEvent);
+        aviatorEnv.put(key, aviatorEnvEvent);
     }
 
     public Map<String, Object> getAviatorEnv(){
